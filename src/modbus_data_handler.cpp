@@ -2,7 +2,7 @@
 
 #include "modbus_data_handler.h"
 #include "modbus_debug.h"
-
+#include "Arduino.h"
 
 /* 
  * Register one element
@@ -81,4 +81,22 @@ int MODBUS_DATA_HANDLER::read_coil(Uint8 EthernetRequest[])
   }
   
   return byteDataLength + 9;
+}
+
+
+int MODBUS_DATA_HANDLER::read_register(Uint8 EthernetRequest[])
+{
+  // int Start = word(EthernetRequest[8], EthernetRequest[9]);
+  // int WordDataLength = word(EthernetRequest[10],EthernetRequest[11]);
+  // int ByteDataLength = WordDataLength * 2;
+  // MbsByteArray[5] = ByteDataLength + 3; //Number of bytes after this one.
+  // MbsByteArray[8] = ByteDataLength;     //Number of bytes after this one (or number of bytes of data).
+  // for(int i = 0; i < WordDataLength; i++)
+  // {
+  //   MbsByteArray[ 9 + i * 2] = highByte(EthernetRequest[Start + i]);
+  //   MbsByteArray[10 + i * 2] =  lowByte(EthernetRequest[Start + i]);
+  // }
+  // MessageLength = ByteDataLength + 9;
+  // client.write(MbsByteArray, MessageLength);
+  // MbsFC = MB_FC_NONE;
 }

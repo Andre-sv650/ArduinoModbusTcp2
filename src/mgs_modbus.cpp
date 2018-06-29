@@ -1,29 +1,19 @@
 #include "mgs_modbus.h"
 #include "modbus_data_handler.h"
-#include "modbus_tcp.h"
-
-// Ethernet settings (depending on MAC and Local network)
-byte mac[] = {0x90, 0xA2, 0xDA, 0x0E, 0x94, 0xB5 };
-IPAddress ip(192, 168, 2, 170);
-IPAddress gateway(192, 168, 2, 1);
-IPAddress subnet(255, 255, 255, 0);
 
 // For Arduino 1.0
-ModbusTCP node(1); // Unit Identifier.
+EthernetServer MbServer(MB_PORT);
+EthernetClient MbmClient;
 
 // #define DEBUG
-void MGS_MODBUS::initiate()
+MGS_MODBUS::MGS_MODBUS()
 {
-  Serial.begin(9600);
-  delay(1000);
-  Ethernet.begin(mac, moduleIPAddress);
-  node.setServerIPAddress(ModbusDeviceIP);
-  delay(6000); // To provide sufficient time to initialize.
-  
   //Initialize the relais outputs.
   Relais1FromPin30.initiate(30, 8);
   
   MbsFC = MB_FC_NONE;
+  
+  DataHandler = MODBUS_DATA_HANDLER();
   
   DataHandler.register_coil_read_write(&Relais1FromPin30);
 }
@@ -32,14 +22,14 @@ void MGS_MODBUS::initiate()
 void MGS_MODBUS::run()
 {  
   int Start, WordDataLength, ByteDataLength, CoilDataLength, MessageLength;
-
+  
   //****************** Read from socket ****************
   EthernetClient client = MbServer.available();
   
   if(client.available())
   {
+    delay(10);
     int i = 0;
-    Serial.println("Running");
     while(client.available())
     {
       MbsByteArray[i] = client.read();
@@ -50,6 +40,7 @@ void MGS_MODBUS::run()
     MbsFC = set_fc(MbsByteArray[7]);  //Byte 7 of request is FC
   }
   
+  
   //****************** Read Coils (1 & 2) **********************
   if(MbsFC == MB_FC_READ_COILS || MbsFC == MB_FC_READ_DISCRETE_INPUT) {
     Serial.println("Read coil started");
@@ -57,27 +48,22 @@ void MGS_MODBUS::run()
     //Read the data.
     int messageLength = this->DataHandler.read_coil(MbsByteArray);
     
-    client.write(MbsByteArray, MessageLength);
+    client.write(MbsByteArray, messageLength);
     MbsFC = MB_FC_NONE;
+
+    Serial.println("Read coil end");
   }
   
   
   //****************** Read Registers (3 & 4) ******************
-//  if(MbsFC == MB_FC_READ_REGISTERS || MbsFC == MB_FC_READ_INPUT_REGISTER) {
-//    Start = word(MbsByteArray[8],MbsByteArray[9]);
-//    WordDataLength = word(MbsByteArray[10],MbsByteArray[11]);
-//    ByteDataLength = WordDataLength * 2;
-//    MbsByteArray[5] = ByteDataLength + 3; //Number of bytes after this one.
-//    MbsByteArray[8] = ByteDataLength;     //Number of bytes after this one (or number of bytes of data).
-//    for(int i = 0; i < WordDataLength; i++)
-//    {
-//      MbsByteArray[ 9 + i * 2] = highByte(MbData[Start + i]);
-//      MbsByteArray[10 + i * 2] =  lowByte(MbData[Start + i]);
-//    }
-//    MessageLength = ByteDataLength + 9;
-//    client.write(MbsByteArray, MessageLength);
-//    MbsFC = MB_FC_NONE;
-//  }
+ if(MbsFC == MB_FC_READ_REGISTERS || MbsFC == MB_FC_READ_INPUT_REGISTER) {
+   Serial.println("Read register started");
+     //Read the data.
+    int messageLength = this->DataHandler.read_register(MbsByteArray);
+    
+    client.write(MbsByteArray, messageLength);
+    MbsFC = MB_FC_NONE;
+ }
   
   //****************** Write Coil (5) **********************
   if(MbsFC == MB_FC_WRITE_COIL) {
@@ -102,19 +88,19 @@ void MGS_MODBUS::run()
     MbsFC = MB_FC_NONE;
   } 
   //****************** Write Register (6) ******************
-  if(MbsFC == MB_FC_WRITE_REGISTER) {
-    word address = word(MbsByteArray[8],MbsByteArray[9]);
-    word incomingData = word(MbsByteArray[10],MbsByteArray[11]);
-    Serial.println("Write register started with address and value");
-    Serial.println(address);
-    Serial.println(incomingData);
-    Start = address;
-    //MbData[Start] = incomingData;
-    MbsByteArray[5] = 6; //Number of bytes after this one.
-    MessageLength = 12;
-    client.write(MbsByteArray, MessageLength);
-    MbsFC = MB_FC_NONE;
-  }
+//  if(MbsFC == MB_FC_WRITE_REGISTER) {
+//    word address = word(MbsByteArray[8],MbsByteArray[9]);
+//    word incomingData = word(MbsByteArray[10],MbsByteArray[11]);
+//    Serial.println("Write register started with address and value");
+//    Serial.println(address);
+//    Serial.println(incomingData);
+//    Start = address;
+//    MbData[Start] = incomingData;
+//    MbsByteArray[5] = 6; //Number of bytes after this one.
+//    MessageLength = 12;
+//    client.write(MbsByteArray, MessageLength);
+//    MbsFC = MB_FC_NONE;
+//  }
   //****************** Write Multiple Coils (15) **********************
 //  if(MbsFC == MB_FC_WRITE_MULTIPLE_COILS) {
 //    Serial.println("Write mutliple coil started");

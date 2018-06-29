@@ -33,13 +33,13 @@ Arduino library for communicating with Modbus server over Ethernet in TCP.
 #ifndef Modbus_TCPIP_h
 #define Modbus_TCPIP_h
 
-#ifndef WIZNET_W5100
-#define WIZNET_W5100  0       /**< define 1 if  WIZNET W5100 IC is used, otherwise 0 */
-#ifndef ENC28J60
-#define ENC28J60      0       /**< define 1 if  ENC28J60 IC is used, otherwise 0     */
+//#ifndef WIZNET_W5100
+//#define WIZNET_W5100  0       /**< define 1 if  WIZNET W5100 IC is used, otherwise 0 */
+//#ifndef ENC28J60
+//#define ENC28J60      0       /**< define 1 if  ENC28J60 IC is used, otherwise 0     */
 #ifndef ESP8266
 #define ESP8266       1
-
+#endif
 
 /* _____STANDARD INCLUDES____________________________________________________ */
 // include types & constants of Wiring core API

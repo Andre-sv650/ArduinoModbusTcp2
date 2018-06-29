@@ -29,7 +29,7 @@ Arduino library for communicating with Modbus server over Ethernet in TCP.
 */
 
 /* _____PROJECT INCLUDES_____________________________________________________ */
-#include "ModbusTCP.h"
+#include "modbus_tcp.h"
 
 
 

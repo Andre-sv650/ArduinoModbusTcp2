@@ -63,8 +63,8 @@
 #include "relais_element.h"
 
 
-#ifndef MGS_MODBUS_H
-#define MGS_MODBUS_H
+#ifndef MgsModbus_h
+#define MgsModbus_h
 
 #define MB_DATA_LENGTH 30 // length of the MdData array
 #define MB_PORT 502
@@ -89,7 +89,8 @@ public:
 
 public:
   // general
-  void initiate();
+  MGS_MODBUS();
+
   // modbus slave
   void run();  
   

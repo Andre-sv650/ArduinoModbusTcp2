@@ -20,6 +20,8 @@ class MODBUS_DATA_HANDLER
     bool8 write_coil(Uint8 BitNumber, bool8 Value);
     
     int read_coil(Uint8 EthernetRequest[]);
+
+    int read_register(Uint8 EthernetRequest[]);
 };
 
 
