@@ -25,6 +25,8 @@ public:
 
      Uint8 get_data(void);
      
+     void set_data(Uint8 Data);
+
      void set_data(Uint8 BitNumber, Uint8 Data);
 };
 

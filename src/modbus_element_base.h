@@ -33,6 +33,8 @@ public:
 
      bool8 get_data(Uint8 BitNumber);
      
+     virtual void set_data(Uint8 Data) = 0;
+
      virtual void set_data(Uint8 BitNumber, Uint8 Data) = 0;
 };
 

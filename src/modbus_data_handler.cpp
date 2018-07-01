@@ -89,10 +89,32 @@ int MODBUS_DATA_HANDLER::read_register(Uint8 EthernetRequest[])
   EthernetRequest[8] = ByteDataLength;     //Number of bytes after this one (or number of bytes of data).
   
   //Get the data from the registered components.
-    //Get the data.
+  //Get the data.
   this->get_data(EthernetRequest, startAddress, ByteDataLength);
 
   return ByteDataLength + 9;
+}
+
+void MODBUS_DATA_HANDLER::write_register(Uint8 EthernetRequest[])
+{
+   int startAddress = word(EthernetRequest[8],EthernetRequest[9]);
+   int incomingData = word(EthernetRequest[10],EthernetRequest[11]);
+   Serial.print("Write register started with address: ") +
+   Serial.print(startAddress) + Serial.print(". And data: ") + Serial.println(incomingData);
+
+  //Get the element that is requested.
+  MODBUS_ELEMENT_BASE *pElement = ReadWriteElements.get_element_from_address(startAddress);
+  
+  if(pElement != NULL_PTR){
+    //Get the data.
+    pElement->set_data(incomingData);
+    
+    MODBUS_DEBUG::print_command_write_data(startAddress, 255u, incomingData);
+  }
+  else{
+    Uint8 errorMessage[] = "Write aborted, element not found.";
+    //MODBUS_DEBUG::print_command_error(errorMessage, (Uint8)StartAddress);
+  } 
 }
 
 
@@ -111,7 +133,7 @@ void MODBUS_DATA_HANDLER::get_data(Uint8 EthernetRequest[], int StartAddress, in
       //Get the data.
       EthernetRequest[9 + i] = pElement->get_data();
       
-      MODBUS_DEBUG::print_command_read_data(StartAddress, ByteDataLength * 8, pElement->get_data());
+      MODBUS_DEBUG::print_command_read_data(StartAddress, ByteDataLength, pElement->get_data());
     }
     else{
       Uint8 errorMessage[] = "Read aborted, element not found. Remaining data is set to 0";
