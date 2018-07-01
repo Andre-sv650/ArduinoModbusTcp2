@@ -12,10 +12,16 @@ class RELAIS_ELEMENT : public MODBUS_ELEMENT_BASE
 private:
   Uint32 StartPin;
 
+  bool8 Reversed;
+
+  bool8 OnlyOneRelaisAtTime;
+
 public:
      RELAIS_ELEMENT(void);
      
-     void initiate(Uint32 StartPin, Uint8 PinCount);
+     void initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed);
+
+     void RELAIS_ELEMENT::initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed, bool8 OnlyOneRelaisAtTime);
 
      Uint8 get_data(void);
      

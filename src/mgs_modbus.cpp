@@ -9,7 +9,7 @@ EthernetClient MbmClient;
 MGS_MODBUS::MGS_MODBUS()
 {
   //Initialize the relais outputs.
-  Relais1FromPin30.initiate(30, 8);
+  Relais1FromPin30.initiate(30, 8, TRUE, TRUE);
   
   MbsFC = MB_FC_NONE;
   
@@ -21,7 +21,7 @@ MGS_MODBUS::MGS_MODBUS()
 //****************** Receive data for ModBusSlave ****************
 void MGS_MODBUS::run()
 {  
-  int Start, WordDataLength, ByteDataLength, CoilDataLength, MessageLength;
+  int Start, MessageLength;
   
   //****************** Read from socket ****************
   EthernetClient client = MbServer.available();
@@ -43,7 +43,7 @@ void MGS_MODBUS::run()
   
   //****************** Read Coils (1 & 2) **********************
   if(MbsFC == MB_FC_READ_COILS || MbsFC == MB_FC_READ_DISCRETE_INPUT) {
-    Serial.println("Read coil started");
+    //Serial.println("Read coil started");
     
     //Read the data.
     int messageLength = this->DataHandler.read_coil(MbsByteArray);
@@ -51,26 +51,26 @@ void MGS_MODBUS::run()
     client.write(MbsByteArray, messageLength);
     MbsFC = MB_FC_NONE;
 
-    Serial.println("Read coil end");
+    //Serial.println("Read coil end");
   }
   
   
   //****************** Read Registers (3 & 4) ******************
  if(MbsFC == MB_FC_READ_REGISTERS || MbsFC == MB_FC_READ_INPUT_REGISTER) {
-   Serial.println("Read register started");
-     //Read the data.
+   //Serial.println("Read register started");
+    //Read the data.
     int messageLength = this->DataHandler.read_register(MbsByteArray);
-    
+
     client.write(MbsByteArray, messageLength);
     MbsFC = MB_FC_NONE;
  }
-  
+ 
   //****************** Write Coil (5) **********************
   if(MbsFC == MB_FC_WRITE_COIL) {
     Serial.println("Write coil started");
     bool8 newValue;
     
-    if(get_word(MbsByteArray[10],MbsByteArray[11]) == 0xFF00){
+    if(get_word(MbsByteArray[10], MbsByteArray[11]) == 0xFF00){
       newValue = TRUE;
     }
     else if((get_word(MbsByteArray[10],MbsByteArray[11])) == 0x0000){

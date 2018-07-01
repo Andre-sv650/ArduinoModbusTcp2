@@ -30,6 +30,8 @@ public:
      MODBUS_ELEMENT_BASE();
 
      virtual Uint8 get_data(void) = 0;
+
+     bool8 get_data(Uint8 BitNumber);
      
      virtual void set_data(Uint8 BitNumber, Uint8 Data) = 0;
 };
