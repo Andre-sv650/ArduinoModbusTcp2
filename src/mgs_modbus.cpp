@@ -1,34 +1,37 @@
+
+
 #include "mgs_modbus.h"
-#include "modbus_data_handler.h"
+#include "modbus_elements/modbus_data_handler.h"
 
 // For Arduino 1.0
 EthernetServer MbServer(MB_PORT);
 EthernetClient MbmClient;
 
-// #define DEBUG
 MGS_MODBUS::MGS_MODBUS()
 {
-  //Initialize the relais outputs.
+  //Initialize the relays outputs.
   Relais1FromPin30.initiate(30, 8, TRUE, TRUE);
+  
+  //LigthIntensity.initiate(10u);
   
   MbsFC = MB_FC_NONE;
   
   DataHandler = MODBUS_DATA_HANDLER();
   
   DataHandler.register_coil_read_write(&Relais1FromPin30);
+  
+  //DataHandler.register_coil_read_write(&LigthIntensity);
 }
 
 //****************** Receive data for ModBusSlave ****************
 void MGS_MODBUS::run()
-{  
-  int Start, MessageLength;
-  
+{ 
   //****************** Read from socket ****************
   EthernetClient client = MbServer.available();
   
   if(client.available())
   {
-    delay(10);
+    delay(1);
     int i = 0;
     while(client.available())
     {
@@ -49,7 +52,6 @@ void MGS_MODBUS::run()
     
     client.write(MbsByteArray, messageLength);
     MbsFC = MB_FC_NONE;
-
     //Serial.println("Read coil end");
   }
   
@@ -76,22 +78,20 @@ void MGS_MODBUS::run()
       newValue = false;
     }
     
-    Start =  get_word(MbsByteArray[8],MbsByteArray[9]);
+    int start =  get_word(MbsByteArray[8],MbsByteArray[9]);
     
     //Set the coil.
-    DataHandler.write_coil(Start, newValue);
+    DataHandler.write_coil(start, newValue);
     
     MbsByteArray[5] = 2; //Number of bytes after this one.
-    MessageLength = 8;
-    client.write(MbsByteArray, MessageLength);
+    client.write(MbsByteArray, 8); //The message length is always 8
     MbsFC = MB_FC_NONE;
   } 
   //****************** Write Register (6) ******************
  if(MbsFC == MB_FC_WRITE_REGISTER) {
    DataHandler.write_register(MbsByteArray);
    MbsByteArray[5] = 6; //Number of bytes after this one.
-   MessageLength = 12;
-   client.write(MbsByteArray, MessageLength);
+   client.write(MbsByteArray, 12); //The message length is always 12
    MbsFC = MB_FC_NONE;
  }
   //****************** Write Multiple Coils (15) **********************
@@ -126,46 +126,20 @@ void MGS_MODBUS::run()
 }
 
 
-//****************** ?? ******************
-MB_FC MGS_MODBUS::set_fc(int fc)
+//****************** Get the request command ******************
+MODBUS_COMMAND MGS_MODBUS::set_fc(int fc)
 {
-  MB_FC FC;
-  FC = MB_FC_NONE;
-  if(fc == 1) FC = MB_FC_READ_COILS;
-  if(fc == 2) FC = MB_FC_READ_DISCRETE_INPUT;
-  if(fc == 3) FC = MB_FC_READ_REGISTERS;
-  if(fc == 4) FC = MB_FC_READ_INPUT_REGISTER;
-  if(fc == 5) FC = MB_FC_WRITE_COIL;
-  if(fc == 6) FC = MB_FC_WRITE_REGISTER;
-  if(fc == 15) FC = MB_FC_WRITE_MULTIPLE_COILS;
-  if(fc == 16) FC = MB_FC_WRITE_MULTIPLE_REGISTERS;
-  return FC;
-}
- 
-//Uint16 MgsModbus::GetDataLen()
-//{
-//  return MbDataLen;
-//}
- 
- 
-//bool8 MgsModbus::GetBit(word Number)
-//{
-//  int ArrayPos = Number / 16;
-//  int BitPos = Number - ArrayPos * 16;
-//  bool8 Tmp = bitRead(MbData[ArrayPos],BitPos);
-//  return Tmp;
-//}
-//
-//
-//bool8 MgsModbus::SetBit(word Number,boolean Data)
-//{
-//  int ArrayPos = Number / 16;
-//  int BitPos = Number - ArrayPos * 16;
-//  bool8 Overrun = ArrayPos > MbDataLen * 16; // check for data overrun
-//  
-//  if (!Overrun){                 
-//    bitWrite(MbData[ArrayPos],BitPos,Data);
-//  } 
-//  return Overrun;
-//}
+  MODBUS_COMMAND command;
 
+  if(fc == 1) command = MB_FC_READ_COILS;
+  else if(fc == 2) command = MB_FC_READ_DISCRETE_INPUT;
+  else if(fc == 3) command = MB_FC_READ_REGISTERS;
+  else if(fc == 4) command = MB_FC_READ_INPUT_REGISTER;
+  else if(fc == 5) command = MB_FC_WRITE_COIL;
+  else if(fc == 6) command = MB_FC_WRITE_REGISTER;
+  else if(fc == 15) command = MB_FC_WRITE_MULTIPLE_COILS;
+  else if(fc == 16) command = MB_FC_WRITE_MULTIPLE_REGISTERS;
+  else command = MB_FC_NONE;
+  
+  return command;
+}

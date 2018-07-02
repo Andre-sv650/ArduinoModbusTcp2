@@ -1,13 +1,9 @@
-/*
- The exe
-*/
 
 #include <SPI.h>
 #include <Ethernet2.h>
 #include "mgs_modbus.h"
 //#include "ModbusDebug.h"
-
-#include "relais_element.h"
+#include "modbus_elements/relais_element.h"
 
 MGS_MODBUS Mb;
 

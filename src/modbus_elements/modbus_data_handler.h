@@ -26,7 +26,7 @@ class MODBUS_DATA_HANDLER
     void write_register(Uint8 EthernetRequest[]);
 
     private:
-    void get_data(Uint8 EthernetRequest[], int StartAddress, int ByteDataLength);
+    void read_register_get_data(Uint8 EthernetRequest[], int StartAddress, int ByteDataLength);
 };
 
 

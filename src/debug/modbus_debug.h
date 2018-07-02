@@ -3,17 +3,18 @@
 #define MODBUS_DEBUG_H
 
 #include "cpu_datatypes.h"
-#include "string.h"
 
 
 class MODBUS_DEBUG
 {
 public:
-  static void print_command_read_data(Uint8 Address, Uint8 Size, Uint8 Data);
+  static void print_command_read_register_get_data(Uint8 Address, Uint8 Size, Uint8 Data);
 
   static void print_read_coil(Uint8 Address, Uint8 BitNumber, Uint8 Data);
   
-  static void print_command_write_data(Uint8 Address, Uint8 Size, Uint8 Data);
+  static void print_command_write_coil(Uint8 BitNumber, Uint8 Size, Uint8 Data);
+  
+  static void print_command_write_register(Uint8 Address, Uint8 Size, Uint8 Data);
   
   static void print_command_error(char Error[], Uint8 Address);
 

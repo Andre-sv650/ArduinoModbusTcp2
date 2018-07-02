@@ -44,11 +44,8 @@
   For the slave the following modbus functions are implemented: 1, 2, 3, 4, 5, 6, 15, 16
   
   The internal and external addresses are 0 (zero) based
-  
-  
   V-0.1.1 2013-06-02
   bugfix
-  
   V-0.1.0 2013-03-02
   initinal version
 */
@@ -59,8 +56,9 @@
 #include <Ethernet2.h>
 
 #include "cpu_datatypes.h"
-#include "modbus_data_handler.h"
-#include "relais_element.h"
+#include "modbus_elements/modbus_data_handler.h"
+#include "modbus_elements/relais_element.h"
+#include "modbus_elements/light_intensity_element.h"
 
 
 #ifndef MgsModbus_h
@@ -69,7 +67,7 @@
 #define MB_DATA_LENGTH 30 // length of the MdData array
 #define MB_PORT 502
 
-enum MB_FC {
+enum MODBUS_COMMAND {
   MB_FC_NONE                     = 0,
   MB_FC_READ_COILS               = 1,
   MB_FC_READ_DISCRETE_INPUT      = 2,
@@ -97,12 +95,14 @@ public:
 private: 
   //modbus slave
   Uint8 MbsByteArray[260]; // send and receive buffer
-  MB_FC MbsFC;
+  MODBUS_COMMAND MbsFC;
   
   //Relais outputs.
    RELAIS_ELEMENT Relais1FromPin30;
    
-   MB_FC set_fc(int fc);
+   LIGHT_INTENSITY_ELEMENT LigthIntensity;
+   
+   MODBUS_COMMAND set_fc(int fc);
 };
 
 #endif

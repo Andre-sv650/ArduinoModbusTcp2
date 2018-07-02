@@ -535,7 +535,7 @@ uint8_t ModbusTCP::ModbusMasterTransaction(uint8_t u8MBFunction)
   u8ModbusADU[4] = packetLength << 8;
   u8ModbusADU[5] = packetLength;
 
-  Serial.println(F("Check time for connection."));
+  Serial.println("Check time for connection.");
   uint32_t MBconnectionTimer = millis();
 #if WIZNET_W5100  
   if(!ModbusClient.connected()) {         // fOR w5100

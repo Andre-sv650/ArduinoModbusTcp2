@@ -11,6 +11,7 @@
 #define int32 int
 #define int8 char
 #define int16 word
+#define float32 float
 
 #define NULL_PTR (void*)0
 

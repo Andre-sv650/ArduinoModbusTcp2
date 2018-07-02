@@ -28,7 +28,7 @@ public:
    
    void add_element(MODBUS_ELEMENT_BASE *pNewElement);
 
-   MODBUS_ELEMENT_BASE* get_element_from_address(Uint8 ByteAddress);
+   MODBUS_ELEMENT_BASE* get_element_from_address(Uint8 StartAddress);
 };
 
 
