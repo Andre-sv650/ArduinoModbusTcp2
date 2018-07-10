@@ -1,14 +1,14 @@
 
 
-#include "project_defines.h"
+#include "../project_defines.h"
 #ifdef TEMP_SENSOR_ONE_WIRE_ELEMENT_ENABLED
 
 #ifndef TEMP_SENSOR_ONE_WIRE_H
 #define TEMP_SENSOR_ONE_WIRE_H
 
-#include "cpu_datatypes.h"
+#include "../cpu_datatypes.h"
 #include "modbus_element_base.h"
-#include "external_libraries/DS18B20.h"
+#include <OneWire.h>
 
 
 /*
@@ -17,14 +17,13 @@
 class TEMP_SENSOR_ONE_WIRE_ELEMENT : public MODBUS_ELEMENT_BASE
 {
 private:
-  OneWire OnewireSensor;
-  DS18B20 Sensors;
-  
+  float32 get_temp(void);
+  OneWire *pTempSensor;
 
 public:
   TEMP_SENSOR_ONE_WIRE_ELEMENT();
   
-  void initiate(Uint32 Pin);
+  void initiate(OneWire* pTempSensor);
   
   Uint8 get_data(void);
 };

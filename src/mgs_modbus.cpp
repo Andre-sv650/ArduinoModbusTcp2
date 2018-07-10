@@ -2,10 +2,12 @@
 
 #include "mgs_modbus.h"
 #include "modbus_elements/modbus_data_handler.h"
+#include <OneWire.h>
 
 // For Arduino 1.0
 EthernetServer MbServer(MB_PORT);
 EthernetClient MbmClient;
+OneWire TemperaturSensor(52);
 
 MGS_MODBUS::MGS_MODBUS()
 {

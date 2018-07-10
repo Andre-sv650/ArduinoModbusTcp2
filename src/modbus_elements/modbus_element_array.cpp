@@ -29,9 +29,10 @@ MODBUS_ELEMENT_BASE* MODBUS_ELEMENT_ARRAY::get_element_from_address(Uint8 ByteAd
   Uint8 i;
   MODBUS_ELEMENT_BASE *pElement = 0;
   
-  for(i = 0u; i < RegisteredElementsCount; i++){
+  for(i = 0u; (i < RegisteredElementsCount) && (pElement == 0); i++){
     
     if(this->pRegisteredElements[i]->StartAddress == ByteAddress){
+      //Return the element.
       pElement = pRegisteredElements[i];
     }
   }
