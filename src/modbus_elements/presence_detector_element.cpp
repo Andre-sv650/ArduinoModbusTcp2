@@ -1,5 +1,5 @@
 
-#include "project_defines.h"
+#include "../project_defines.h"
 
 #ifdef PRESENCE_DETECTOR_ELEMENT_ENABLED
 
@@ -34,7 +34,7 @@ void PRESENCE_DETECTOR_ELEMENT::initiate(Uint32 Pin, Uint8 NumberOfDetectors)
 }
 
 
-Uint8 PRESENCE_DETECTOR_ELEMENT::get_data()
+Uint8 PRESENCE_DETECTOR_ELEMENT::get_data(Uint8 ByteNumber)
 {
   Uint8 result = 0u;
   

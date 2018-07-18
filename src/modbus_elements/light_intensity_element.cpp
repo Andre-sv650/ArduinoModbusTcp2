@@ -1,5 +1,5 @@
 
-#include "project_defines.h"
+#include "../project_defines.h"
 
 #ifdef LIGHT_INTENSITY_ELEMENT_ENABLED
 
@@ -26,7 +26,7 @@ void LIGHT_INTENSITY_ELEMENT::initiate(Uint32 Pin)
 
 
 
-Uint8 LIGHT_INTENSITY_ELEMENT::get_data()
+Uint8 LIGHT_INTENSITY_ELEMENT::get_data(Uint8 ByteNumber)
 {
   Uint8 result = 0u;
   

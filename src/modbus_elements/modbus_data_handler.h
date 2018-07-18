@@ -15,7 +15,7 @@ class MODBUS_DATA_HANDLER
     
     public:
     //The register options
-    void register_coil_read_write(MODBUS_ELEMENT_BASE *pElement);
+    void register_element(MODBUS_ELEMENT_BASE *pElement);
 
     bool8 write_coil(Uint8 BitNumber, bool8 Value);
     

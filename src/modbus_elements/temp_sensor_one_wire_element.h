@@ -17,15 +17,17 @@
 class TEMP_SENSOR_ONE_WIRE_ELEMENT : public MODBUS_ELEMENT_BASE
 {
 private:
+  float32 CurrentTemperature;
+
   float32 get_temp(void);
   OneWire *pTempSensor;
 
 public:
   TEMP_SENSOR_ONE_WIRE_ELEMENT();
   
-  void initiate(OneWire* pTempSensor);
+  void initiate(Uint8 StartAddress, OneWire* pTempSensor);
   
-  Uint8 get_data(void);
+  Uint8 get_data(Uint8 ByteNumber);
 };
 
 

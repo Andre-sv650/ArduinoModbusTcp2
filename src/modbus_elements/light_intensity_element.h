@@ -1,12 +1,12 @@
 
 
-#include "project_defines.h"
+#include "../project_defines.h"
 #ifdef LIGHT_INTENSITY_ELEMENT_ENABLED
 
 #ifndef LIGHT_INTENSITY_ELEMENT_H
 #define LIGHT_INTENSITY_ELEMENT_H
 
-#include "cpu_datatypes.h"
+#include "../cpu_datatypes.h"
 #include "modbus_element_base.h"
 
 
@@ -23,7 +23,7 @@ public:
   
   void initiate(Uint32 Pin);
   
-  Uint8 get_data(void);
+  Uint8 get_data(Uint8 ByteNumber);
 };
 
 

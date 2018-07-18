@@ -11,16 +11,15 @@
 
 TEMP_SENSOR_ONE_WIRE_ELEMENT::TEMP_SENSOR_ONE_WIRE_ELEMENT()
 {
-  
 }
 
 
-void TEMP_SENSOR_ONE_WIRE_ELEMENT::initiate(OneWire *pTempSensor)
+void TEMP_SENSOR_ONE_WIRE_ELEMENT::initiate(Uint8 StartAddress, OneWire *pTempSensor)
 {
+    this->StartAddress = StartAddress;
+    this->SizeInBits = 32u;
     this->pTempSensor = pTempSensor;
 }
-
-
 
 
 float32 TEMP_SENSOR_ONE_WIRE_ELEMENT::get_temp(void){
@@ -66,6 +65,18 @@ float32 TEMP_SENSOR_ONE_WIRE_ELEMENT::get_temp(void){
   float TemperatureSum = tempRead / 16;
   
   return TemperatureSum;
+}
+
+
+Uint8 TEMP_SENSOR_ONE_WIRE_ELEMENT::get_data(Uint8 ByteNumber)
+{
+    if(ByteNumber == 0u){
+        CurrentTemperature = get_temp();
+    }
+
+    Uint8 *pTempArray = (Uint8*)&CurrentTemperature;
+
+    return pTempArray[ByteNumber];
 }
 
 

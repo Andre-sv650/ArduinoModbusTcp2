@@ -3,7 +3,7 @@
 #ifndef MODBUS_ELEMENT_BASE_H
 #define MODBUS_ELEMENT_BASE_H
 
-#include "cpu_datatypes.h"
+#include "../cpu_datatypes.h"
 
 
 /*
@@ -33,16 +33,14 @@ public:
 public:
   MODBUS_ELEMENT_BASE();
 
-  virtual Uint8 get_data(void) = 0;
+  virtual Uint8 get_data(Uint8 ByteNumber);
 
-  bool8 get_data(Uint8 BitNumber);
+  bool8 get_data_bitwise(Uint8 BitNumber);
 
   virtual void set_data(Uint8 Data);
 
   virtual void set_data(Uint8 BitNumber, Uint8 Data);
 };
-
-
 
 
 #endif /* MODBUS_ELEMENT_BASE_H_ */

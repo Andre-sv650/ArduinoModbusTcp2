@@ -91,7 +91,7 @@ void RELAIS_ELEMENT::set_data(Uint8 BitNumber, Uint8 Data)
 }
 
 
-Uint8 RELAIS_ELEMENT::get_data()
+Uint8 RELAIS_ELEMENT::get_data(Uint8 ByteNumber)
 {
   Uint8 result = 0u;
   

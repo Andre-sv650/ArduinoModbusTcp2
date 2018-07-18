@@ -3,16 +3,23 @@
 #include "mgs_modbus.h"
 #include "modbus_elements/modbus_data_handler.h"
 #include <OneWire.h>
+#include "modbus_elements/temp_sensor_one_wire_element.h"
 
-// For Arduino 1.0
+//
 EthernetServer MbServer(MB_PORT);
 EthernetClient MbmClient;
+
+//Temperature sensor.
 OneWire TemperaturSensor(52);
+TEMP_SENSOR_ONE_WIRE_ELEMENT TempSensorElement;
 
 MGS_MODBUS::MGS_MODBUS()
 {
   //Initialize the relays outputs.
   Relais1FromPin30.initiate(30, 8, TRUE, TRUE);
+
+  //Initialize the one wire element for a temperature sensor.
+  TempSensorElement.initiate(4u, &TemperaturSensor);
   
   //LigthIntensity.initiate(10u);
   
@@ -20,7 +27,9 @@ MGS_MODBUS::MGS_MODBUS()
   
   DataHandler = MODBUS_DATA_HANDLER();
   
-  DataHandler.register_coil_read_write(&Relais1FromPin30);
+  DataHandler.register_element(&Relais1FromPin30);
+
+  DataHandler.register_element(&TempSensorElement);
   
   //DataHandler.register_coil_read_write(&LigthIntensity);
 }

@@ -14,10 +14,10 @@ MODBUS_ELEMENT_BASE::MODBUS_ELEMENT_BASE()
 }
 
 
-bool8 MODBUS_ELEMENT_BASE::get_data(Uint8 BitNumber)
+bool8 MODBUS_ELEMENT_BASE::get_data_bitwise(Uint8 BitNumber)
 {
   //Get the data.
-  Uint8 data = this->get_data();
+  Uint8 data = this->get_data(0u);
   
   Uint8 mask = 1 << BitNumber;
 

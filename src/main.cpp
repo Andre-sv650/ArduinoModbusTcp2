@@ -10,10 +10,6 @@ MGS_MODBUS Mb;
 //ModbusDebug MyModbusDebug;
 int inByte = 0; // incoming serial byte
 
-//The modbus data handler.
-MODBUS_DATA_HANDLER ModBusDataHandler;
-RELAIS_ELEMENT RelaisElement;
-
 // Ethernet settings (depending on MAC and Local network)
 byte mac[] = {0x90, 0xA2, 0xDA, 0x0E, 0x94, 0xB5 };
 IPAddress ip(192, 168, 2, 170);
@@ -38,12 +34,10 @@ void setup() {
     Serial.print(".");
   }
   Serial.println();
-
-  //Add the relais element to the modbus data handler.
-  ModBusDataHandler.register_coil_read_write(&RelaisElement);
 }
 
-void loop() {
+void loop() 
+{
   if (Serial.available() > 0) {
     // get incoming byte:
     inByte = Serial.read();
