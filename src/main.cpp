@@ -1,9 +1,8 @@
 
 #include <SPI.h>
 #include <Ethernet2.h>
+#include "cpu_datatypes.h"
 #include "mgs_modbus.h"
-//#include "ModbusDebug.h"
-#include "modbus_elements/relais_element.h"
 
 MGS_MODBUS Mb;
 
@@ -12,8 +11,8 @@ int inByte = 0; // incoming serial byte
 
 // Ethernet settings (depending on MAC and Local network)
 byte mac[] = {0x90, 0xA2, 0xDA, 0x0E, 0x94, 0xB5 };
-IPAddress ip(192, 168, 2, 170);
-IPAddress gateway(192, 168, 2, 1);
+IPAddress ip(192, 168, 1, 170);
+IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 
@@ -36,13 +35,10 @@ void setup() {
   Serial.println();
 }
 
-void loop() 
-{
+void loop() {
   if (Serial.available() > 0) {
     // get incoming byte:
     inByte = Serial.read();
-
-    //MyModbusDebug.check_for_commands(inByte,  Mb);
   }
 
   Mb.run();
