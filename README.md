@@ -10,7 +10,7 @@ Prepare the hardware:
 1. Buy an Arduino or Arduino Mega
 2. Buy an Ethernet 2 Shield
 
-Instructions for first progress
+Instructions for first setup:
 1. Check out this repository or download the zip file.
 2. Go to the platform IO Site and click Open Project.
 3. Open the folder where the zip file was unzipped. Click open
