@@ -59,6 +59,7 @@
 #include "modbus_elements/modbus_data_handler.h"
 #include "modbus_elements/relais_element.h"
 #include "modbus_elements/light_intensity_element.h"
+#include "sensor_elements_initiate.h"
 
 
 #ifndef MgsModbus_h
@@ -81,26 +82,22 @@ enum MODBUS_COMMAND {
 
 class MGS_MODBUS
 {
-//Fields
-public:
-  MODBUS_DATA_HANDLER DataHandler;  
-
 public:
   // general
   MGS_MODBUS();
+
+  MODBUS_COMMAND MbsFC;
 
   // modbus slave
   void run();  
   
 private: 
+  SENSOR_ELEMENTS_INITIATE SensorElements;
+  
   //modbus slave
   Uint8 MbsByteArray[260]; // send and receive buffer
-  MODBUS_COMMAND MbsFC;
-  
-  //Relais outputs.
-   RELAIS_ELEMENT Relais1FromPin30;
    
-   LIGHT_INTENSITY_ELEMENT LigthIntensity;
+   //LIGHT_INTENSITY_ELEMENT LigthIntensity;
    
    MODBUS_COMMAND set_fc(int fc);
 };
