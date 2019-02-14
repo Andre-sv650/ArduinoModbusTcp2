@@ -1,5 +1,5 @@
 
-#include "../project_defines.h"
+#include "project_defines.h"
 
 #ifdef LIGHT_INTENSITY_ELEMENT_ENABLED
 
@@ -18,15 +18,17 @@ LIGHT_INTENSITY_ELEMENT::LIGHT_INTENSITY_ELEMENT()
 }
 
 
-void LIGHT_INTENSITY_ELEMENT::initiate(Uint32 Pin)
+void LIGHT_INTENSITY_ELEMENT::initiate(Uint8 Address, Uint32 Pin)
 {
   this->Pin = Pin;
+
+  MODBUS_ELEMENT_BASE::initiate(Address, 32);
 }
 
 
 
 
-Uint8 LIGHT_INTENSITY_ELEMENT::get_data(Uint8 ByteNumber)
+Uint8 LIGHT_INTENSITY_ELEMENT::get_data()
 {
   Uint8 result = 0u;
   

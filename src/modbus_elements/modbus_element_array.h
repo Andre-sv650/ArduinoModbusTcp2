@@ -25,6 +25,8 @@ private:
 public:
    //Methods
    MODBUS_ELEMENT_ARRAY();
+
+   void background_routine(void);
    
    void add_element(MODBUS_ELEMENT_BASE *pNewElement);
 

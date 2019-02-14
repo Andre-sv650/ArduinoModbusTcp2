@@ -20,55 +20,59 @@ RELAIS_ELEMENT::RELAIS_ELEMENT(void)
 /*
  * Call the initiate method once for the relays element.
  */
-void RELAIS_ELEMENT::initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed)
+void RELAIS_ELEMENT::initiate(Uint8 Address, Uint32 StartPin, Uint8 PinCount, bool8 Reversed)
 {
-  this->initiate(StartPin, PinCount, Reversed, FALSE);
+  this->initiate(Address, StartPin, PinCount, Reversed, FALSE);
 }
 
-
-void RELAIS_ELEMENT::initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed, bool8 OnlyOneRelaisAtTime)
-{  
+void RELAIS_ELEMENT::initiate(Uint8 Address, Uint32 StartPin, Uint8 PinCount, bool8 Reversed, bool8 OnlyOneRelaisAtTime)
+{
   Uint8 i;
 
   this->Pin = StartPin;
-  this->SizeInBits = PinCount;
   this->Reversed = Reversed;
   this->OnlyOneRelaisAtTime = FALSE;
-  
-  for(i = 0u; i < PinCount; i++){
+
+  for (i = 0u; i < PinCount; i++)
+  {
     //First set the digital output, to avoid that the output is set to on if the pin mode is set first.
     digitalWrite((uint8_t)Pin + i, (uint8_t)Reversed);
-    
+
     pinMode(Pin + i, OUTPUT); // sets the digital pin as output
   }
-  
+
   this->OnlyOneRelaisAtTime = OnlyOneRelaisAtTime;
+
+  MODBUS_ELEMENT_BASE::initiate(Address, PinCount);
 }
 
 //Set the data
 void RELAIS_ELEMENT::set_data(Uint8 Data)
 {
   //Check if only one element at one time is set.
-  if(OnlyOneRelaisAtTime == TRUE)
+  if (OnlyOneRelaisAtTime == TRUE)
   {
     //Set all elements to off.
-    for(int i = 0u; i < SizeInBits; i++){
+    for (int i = 0u; i < SizeInBits[0]; i++)
+    {
       digitalWrite((uint8_t)Pin + i, (uint8_t)(0) ^ Reversed);
     }
   }
 
-  for(Uint8 i = 0u; i < SizeInBits; i++){
+  for (Uint8 i = 0u; i < SizeInBits[0]; i++)
+  {
     Uint8 mask = 0x1 << i;
-    
-    if((Data & mask) == mask){
+
+    if ((Data & mask) == mask)
+    {
       //Set the new value.
       digitalWrite((uint8_t)Pin + i, (uint8_t)(0x1) ^ Reversed);
-      
+
       //Abort the write.
-      i = SizeInBits;
+      i = SizeInBits[0];
     }
   }
- 
+
   MODBUS_DEBUG::print_relais_set(Pin, 255u, Data);
 }
 
@@ -76,31 +80,32 @@ void RELAIS_ELEMENT::set_data(Uint8 Data)
 void RELAIS_ELEMENT::set_data(Uint8 BitNumber, Uint8 Data)
 {
   //Check if only one element at one time is set.
-  if(OnlyOneRelaisAtTime == TRUE)
+  if (OnlyOneRelaisAtTime == TRUE)
   {
     //Set all elements to off.
-    for(int i = 0u; i < SizeInBits; i++){
+    for (int i = 0u; i < SizeInBits[0]; i++)
+    {
       digitalWrite((uint8_t)Pin + i, (uint8_t)(0) ^ Reversed);
     }
   }
-  
+
   //Set the new value.
   digitalWrite((uint8_t)Pin + BitNumber, (uint8_t)(Data & 0x1) ^ Reversed);
 
   MODBUS_DEBUG::print_relais_set(Pin, BitNumber, Data);
 }
 
-
-Uint8 RELAIS_ELEMENT::get_data(Uint8 ByteNumber)
+Uint8 RELAIS_ELEMENT::get_data()
 {
   Uint8 result = 0u;
-  
-  for(int i = 0u; i < this->SizeInBits; i++){
-    result |= ((digitalRead((uint8_t)(this->Pin + i)) ^ Reversed) << i) ;
+
+  for (int i = 0u; i < SizeInBits[0]; i++)
+  {
+    result |= ((digitalRead((uint8_t)(this->Pin + i)) ^ Reversed) << i);
   }
 
-  MODBUS_DEBUG::print_relais_get(Pin, SizeInBits, result);
-  
+  MODBUS_DEBUG::print_relais_get(Pin, SizeInBits[0], result);
+
   return result;
 }
 
