@@ -1,14 +1,15 @@
 
 
-#include "../project_defines.h"
+#include "project_defines.h"
 #ifdef TEMP_SENSOR_ONE_WIRE_ELEMENT_ENABLED
 
-#ifndef TEMP_SENSOR_ONE_WIRE_H
-#define TEMP_SENSOR_ONE_WIRE_H
+#ifndef TEMP_SENSOR_ONE_WIRE_ELEMENT_H
+#define TEMP_SENSOR_ONE_WIRE_ELEMENT_H
 
-#include "../cpu_datatypes.h"
+
+#include "cpu_datatypes.h"
 #include "modbus_element_base.h"
-#include <OneWire.h>
+#include "external_libraries/OneWire.h"
 
 
 /*
@@ -17,20 +18,23 @@
 class TEMP_SENSOR_ONE_WIRE_ELEMENT : public MODBUS_ELEMENT_BASE
 {
 private:
-  float32 CurrentTemperature;
-
-  float32 get_temp(void);
   OneWire *pTempSensor;
 
+  float32 Temperature;
+
 public:
-  TEMP_SENSOR_ONE_WIRE_ELEMENT();
+  TEMP_SENSOR_ONE_WIRE_ELEMENT(void);
+
+  void background_routine(void);
   
-  void initiate(Uint8 StartAddress, OneWire* pTempSensor);
+  void initiate(Uint8 Pin, Uint8 StartAddress, OneWire *pTempSensor);
   
-  Uint8 get_data(Uint8 ByteNumber);
+  Uint8 get_data(void);
+
+  void get_data(Uint8 Address, Uint8 pDataArray[], Uint8 NumberOfBytes);
 };
 
 
-#endif /* TEMP_SENSOR_ONE_WIRE_H */
+#endif /* TEMP_SENSOR_ONE_WIRE_ELEMENT_H */
 
 #endif //TEMP_SENSOR_ONE_WIRE_ELEMENT_ENABLED

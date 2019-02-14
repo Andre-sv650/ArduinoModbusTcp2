@@ -8,22 +8,31 @@
 
 #include "cpu_datatypes.h"
 #include "modbus_element_base.h"
+#include "external_libraries/DHT.h"
 /*
  * One dht element
  */
 class DHT22_ELEMENT : public MODBUS_ELEMENT_BASE
 {
 private:
-  Uint32 StartPin;
-  
-  void trigger_data(void);
+  DHT MyDht22;
+
+  float32 Temperature;
+
+  float32 Humidity;
+
+  Uint8 Dht22NotAvailableDebugMessageSet;
 
 public:
-     DHT22_ELEMENT(void);
-     
-     void initiate(Uint32 StartPin);
+  DHT22_ELEMENT(void);
 
-     Uint8 get_data(void);
+  void initiate(Uint8 StartAddress, Uint32 StartPin);
+
+  void background_routine(void);
+
+  Uint8 get_data(void);
+
+  void get_data(Uint8 Address, Uint8 pDataArray[], Uint8 NumberOfBytes);
 };
 
 #endif //DHT22_ELEMENT_H

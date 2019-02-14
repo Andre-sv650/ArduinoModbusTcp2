@@ -1,12 +1,12 @@
 
-#include "../project_defines.h"
+#include "project_defines.h"
 #ifdef RELAIS_ELEMENT_ENABLED
 
 
 #ifndef RELAIS_ELEMENT_H
 #define RELAIS_ELEMENT_H
 
-#include "../cpu_datatypes.h"
+#include "cpu_datatypes.h"
 #include "modbus_element_base.h"
 /*
  * One relais element of 8 bit
@@ -21,11 +21,11 @@ private:
 public:
      RELAIS_ELEMENT(void);
      
-     void initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed);
+     void initiate(Uint8 Address, Uint32 StartPin, Uint8 PinCount, bool8 Reversed);
 
-     void initiate(Uint32 StartPin, Uint8 PinCount, bool8 Reversed, bool8 OnlyOneRelaisAtTime);
+     void initiate(Uint8 Address, Uint32 StartPin, Uint8 PinCount, bool8 Reversed, bool8 OnlyOneRelaisAtTime);
 
-     Uint8 get_data(Uint8 ByteNumber);
+     Uint8 get_data(void);
      
      void set_data(Uint8 Data);
 

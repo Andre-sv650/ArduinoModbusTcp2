@@ -1,117 +1,138 @@
 #include "../project_defines.h"
 #ifdef DHT22_ELEMENT_ENABLED
 
-// DHT Temperature & Humidity Sensor
-// Unified Sensor Library Example
-// Written by Tony DiCola for Adafruit Industries
-// Released under an MIT license.
-
 // Depends on the following Arduino libraries:
 // - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
-#include "cpu_datatypes.h"
-#include "external_libraries/DHT.h"
-#include "dht22_element.h"
-
 // See guide for details on sensor wiring and usage:
 // https://learn.adafruit.com/dht/overview
-Uint32 delayMS;
+#include "dht22_element.h"
+#include "../debug/modbus_debug.h"
 
 DHT22_ELEMENT::DHT22_ELEMENT()
 {
-
 }
 
-void DHT22_ELEMENT::initiate() 
+void DHT22_ELEMENT::initiate(Uint8 StartAddress, Uint32 StartPin)
 {
-  // Data wire is plugged into port 7 on the Arduino
-  // Connect a 4.7K resistor between VCC and the data pin (strong pullup) Setup a DHT22 instance
-  DHT22 myDHT22(StartPin);
+  //One address for the temperatur and one for the humidity
+  Uint8 addressses[] = {StartAddress, StartAddress + 1};
+
+  //Set the start pin
+  Pin = StartPin;
+
+  //Set the temperature and humditiy to invalid values.
+  Temperature = -500;
+  Humidity = -500;
+  Dht22NotAvailableDebugMessageSet = 0u;
+
+  MODBUS_ELEMENT_BASE::initiate(addressses, 2u);
+
+  // Data wire is plugged on the Arduino
+  // Connect a 4.7K or 10K resistor between VCC and the data pin (strong pullup) Setup a DHT22 instance
+  MyDht22.begin(Pin, DHT22);
 }
 
-Uint8 DHT22_ELEMENT::get_data() 
+Uint8 DHT22_ELEMENT::get_data()
 {
-  this->trigger_data();
-  
-  // Get temperature event and print its value.
-  sensors_event_t event;  
-  dht.temperature().getEvent(&event);
-  
-  if (isnan(event.temperature)) {
-    Serial.println("Error reading temperature!");
-  }
-  else {
-    Serial.print("Temperature: ");
-    Serial.print(event.temperature);
-    Serial.println(" *C");
-  }
-  
-  // Get humidity event and print its value.
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity)) {
-    Serial.println("Error reading humidity!");
-  }
-  else {
-    Serial.print("Humidity: ");
-    Serial.print(event.relative_humidity);
-    Serial.println("%");
-  }
-
-  return dht.temperature;
+  //Not possible.
+  return 255u;
 }
 
-void DHT22_ELEMENT::trigger_data(void)
+void DHT22_ELEMENT::background_routine(void)
 {
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float humidity = MyDht22.readHumidity();
+  // Read temperature as Celsius (the default)
+  float temperature = MyDht22.readTemperature();
+  // Read temperature as Fahrenheit (isFahrenheit = true)
+  float f = 0.0f; // MyDht22.readTemperature(true);
 
-  DHT22_ERROR_t errorCode;
-
-  // The sensor can only be read from every 1-2s, and requires a minimum
-  // 2s warm-up after power-on.
-  delay(2000);
-
-  Serial.print("Requesting data...");
-  errorCode = myDHT22.readData();
-  switch(errorCode)
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(humidity) || isnan(temperature) || isnan(f))
   {
-  case DHT_ERROR_NONE:
-    Serial.print("Got Data ");
-    Serial.print(myDHT22.getTemperatureC());
-    Serial.print("C ");
-    Serial.print(myDHT22.getHumidity());
-    Serial.println("%");
-    // Alternately, with integer formatting which is clumsier but more compact to store and
-    // can be compared reliably for equality:
-    //    
-    char buf[128];
-    sprintf(buf, "Integer-only reading: Temperature %hi.%01hi C, Humidity %i.%01i %% RH",
-        myDHT22.getTemperatureCInt()/10, abs(myDHT22.getTemperatureCInt()%10),
-        myDHT22.getHumidityInt()/10, myDHT22.getHumidityInt()%10);
-    Serial.println(buf);
-    break;
-  case DHT_ERROR_CHECKSUM:
-    Serial.print("check sum error ");
-    Serial.print(myDHT22.getTemperatureC());
-    Serial.print("C ");
-    Serial.print(myDHT22.getHumidity());
-    Serial.println("%");
-    break;
-  case DHT_BUS_HUNG:
-    Serial.println("BUS Hung ");
-    break;
-  case DHT_ERROR_NOT_PRESENT:
-    Serial.println("Not Present ");
-    break;
-  case DHT_ERROR_ACK_TOO_LONG:
-    Serial.println("ACK time out ");
-    break;
-  case DHT_ERROR_SYNC_TIMEOUT:
-    Serial.println("Sync Timeout ");
-    break;
-  case DHT_ERROR_DATA_TIMEOUT:
-    Serial.println("Data Timeout ");
-    break;
-  case DHT_ERROR_TOOQUICK:
-    Serial.println("Polled to quick ");
-    break;
+    if(Dht22NotAvailableDebugMessageSet < 200){
+      Dht22NotAvailableDebugMessageSet++;
+    }
+
+    if(Dht22NotAvailableDebugMessageSet == 200){
+      //MODBUS_DEBUG::print_dht22_not_available(Pin);
+      Temperature = -500;
+      Humidity = -500;
+
+      Dht22NotAvailableDebugMessageSet = 201;
+    }
+  }
+  else{
+    if(Dht22NotAvailableDebugMessageSet > 200){
+      
+      //MODBUS_DEBUG::print_dht22_now_available(Pin);
+    }
+
+    Dht22NotAvailableDebugMessageSet = 0;
+
+    //Data valid. Set the data.
+    Humidity = humidity;
+    Temperature = temperature;
+  }
+}
+
+void DHT22_ELEMENT::get_data(Uint8 Address, Uint8 pDataArray[], Uint8 NumberOfBytes)
+{
+  if (NumberOfBytes == 4u)
+  {
+    //Check which data should be get.
+    if (Address == StartAddress[0])
+    {
+      //Get the temperature. Set the float value to the data array. This is both little endian.
+      *((float32 *)&pDataArray[0]) = Temperature;
+
+      MODBUS_DEBUG::print_dht22_temperature(Pin, Temperature);
+    }
+    else if(Address == StartAddress[1]){
+      //Get humidity
+      *((float32 *)&pDataArray[0]) = Humidity;
+
+      MODBUS_DEBUG::print_dht22_humidity(Pin, Humidity);
+    }
+    else{
+      //Not present
+      pDataArray[0] = 255u;
+    }
+  }
+  else if(NumberOfBytes == 2u){
+    if(Address == StartAddress[0]){
+      Uint16 temperature = (Uint16)Temperature;
+      pDataArray[1] = (Uint8)temperature;
+      pDataArray[0] = (Uint8)(temperature >> 8u);
+      
+      MODBUS_DEBUG::print_dht22_temperature(Pin, Temperature);
+    }
+    else{
+      Uint16 humidity = (Uint16)Humidity;
+      pDataArray[1] = (Uint8)humidity;
+      pDataArray[0] = (Uint8)(humidity >> 8u);
+
+      MODBUS_DEBUG::print_dht22_humidity(Pin, Humidity);
+    }
+  }
+  else if(NumberOfBytes == 1u){
+    if(Address == StartAddress[0]){
+      pDataArray[0] = (Uint8)Temperature;
+      
+      MODBUS_DEBUG::print_dht22_temperature(Pin, Humidity);
+    }
+    else{
+      pDataArray[0] = (Uint8)Humidity;
+
+      MODBUS_DEBUG::print_dht22_humidity(Pin, Humidity);
+    }
+  }
+  else
+  {
+    pDataArray[0] = 255u;
+
+    MODBUS_DEBUG::print_command_error("Error reading DHT22", Address);
   }
 }
 
