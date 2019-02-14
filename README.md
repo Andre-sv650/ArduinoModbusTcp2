@@ -1,5 +1,9 @@
 # ArduinoModbusTcp2
-This is an arduino library for Modbus TCP.
+This is an arduino library for Modbus TCP. Currently running with Relais and DHT22 elements.
+Next updates:
+- Temperature sensor One wire elements.
+- Light intensity sensor.
+- Modbus TCP weather station with wind and rain detection.
 
 ## Prepare the sofware:
 1. Install Visual studio code
