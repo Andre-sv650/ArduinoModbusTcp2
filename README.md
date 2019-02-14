@@ -1,24 +1,23 @@
 # ArduinoModbusTcp2
 This is an arduino library for Modbus TCP.
 
-##Prepare the sofware:
+## Prepare the sofware:
 1. Install Visual studio code
 2. Install platform IO
 3. Install arduino or arduino mega Boards from the Platform IO start page inside Visual studio code.
 
-##Prepare the hardware:
+## Prepare the hardware:
 1. Buy an Arduino or Arduino Mega
 2. Buy an Ethernet 2 Shield
 
-##Instructions for first setup:
+## Instructions for first setup:
 1. Check out this repository or download the zip file.
 2. Go to the platform IO Site and click Open Project.
 3. Open the folder where the zip file was unzipped. Click open
 4. Open platform IO ini file in the Visual studio code editor. Check if you have an arduino or arduino mega, choose the correct platform.
 5. Compile the project with visual studio code with platform IO installed. This should be finished without errors.
 
-
-##Choose connected hardware:
+## Choose connected hardware:
 1. Open the src folder.
 2. Open the file sensor_elements_initiate.cpp
 3. Setup the harware that is connected. There are 2 examples given.
@@ -26,11 +25,12 @@ This is an arduino library for Modbus TCP.
  - The second example is a DHT22 sensor. Dth22Sensor.initiate(100, 2). This initializes a DHT22 element at Modbus address 100. Address 100 is the temperature and Address 101 is the humidity.
 4. Setup the IP address. Open the file main.cpp and set the mac address and the IP Address of the device.
 
-##Debug:
+## Debug:
 1. You can test the Modbus connection with the https://sourceforge.net/projects/qmodmaster/ 
  - Download the program and unzip it.
  - Start the program and click on options. Choose Modbus TCP and put in the IP address of the arduino.
  - Click on connect.
+ - If you are connected with the Platform IO serial monitor, each request is monitored.
 
 2. For the relais you can now click on read coil with the Start Address. For our example set the start address to 0.
  - Click on Read/Write left from the connect button. Now the relais state is read from arduino.
@@ -42,12 +42,12 @@ This is an arduino library for Modbus TCP.
  - Click on the Read holding register or read input register with Stard address set. In our example the start address is 100.
  - The data is get as 16 bit value.
  
- ##Domiq Base
+ ## Domiq Base
  Domiq Base is a product to visualize LCN smart home devices. Domiq base can also use modbus tcp connections for incoming or outgoing data.
  1. Login to Domiq Base and choose Modbus
  2. Add a connection via "Verbindung hinzufügen".
  
- ###Setup a connection to the Relais in Domiq Base
+ ### Setup a connection to the Relais in Domiq Base
  3. Put in a name and choose TCP as connection. In my example i choose the name Carport.
  4. Put in the IP address of the arduino and set the port to 502.
  5. Now add an device with the button "Gerät hinzufügen".
@@ -66,7 +66,7 @@ This is an arduino library for Modbus TCP.
   - Set the Kanal to MODBUS.Carport.Arduino.Aussentemperatur.
   - Now you can visualize the temperature.
 
-#License
+# License
 All Software is licensed under the GNU license V3.
 The library modules are licensed under the MIT license or are from https://github.com/krvarma/Dallas_DS18B20_SparkCore/blob/master/README.md
   
