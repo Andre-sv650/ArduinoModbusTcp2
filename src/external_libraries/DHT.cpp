@@ -9,9 +9,14 @@ written by Adafruit Industries
 
 #define MIN_INTERVAL 2000
 
-DHT::DHT(uint8_t pin, uint8_t type, uint8_t count)
+DHT::DHT(void)
 {
-  _pin = pin;
+
+}
+
+void DHT::begin(uint8_t pin, uint8_t type, uint8_t count)
+{
+   _pin = pin;
   _type = type;
 #ifdef __AVR
   _bit = digitalPinToBitMask(pin);
@@ -21,10 +26,8 @@ DHT::DHT(uint8_t pin, uint8_t type, uint8_t count)
   // reading pulses from DHT sensor.
   // Note that count is now ignored as the DHT reading algorithm adjusts itself
   // basd on the speed of the processor.
-}
-
-void DHT::begin(void)
-{
+  
+  
   // set up the pins!
   pinMode(_pin, INPUT_PULLUP);
   // Using this value makes sure that millis() - lastreadtime will be
