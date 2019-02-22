@@ -39,9 +39,9 @@ class DHT
 {
 
 public:
-  DHT(Uint8 pin, Uint8 type, Uint8 count=6);
+  DHT(void);
   
-  void begin(void);
+  void begin(Uint8 pin, Uint8 type, Uint8 count=6);
   float32 readTemperature(bool S=false, bool force=false);
   float32 convertCtoF(float32);
   float32 convertFtoC(float32);
